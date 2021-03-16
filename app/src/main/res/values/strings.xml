@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RememberMe</string>
+    <string name="emptyText">Nothing here. All done I guess!</string>
+    <string name="todoDialog">To add a new item, type in the field at the bottom and press "ADD ITEM." To remove a completed item, long-press the item you want to remove.</string>
+    <string name="todoDiagTitle">To-Do Help</string>
+    <string name="addItemBtn">Add Item</string>
+    <string name="editTxtNewItem">Enter a new item</string>
+    <string name="helpBtn">Help</string>
+</resources>
