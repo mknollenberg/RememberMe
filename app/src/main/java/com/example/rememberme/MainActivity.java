@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+
+// to do list made following tutorial at https://guides.codepath.com/android/Basic-Todo-App-Tutorial
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> items;
@@ -76,7 +78,29 @@ public class MainActivity extends AppCompatActivity {
         EditText newItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = newItem.getText().toString();
         itemsAdapter.add(itemText);
+        itemsAdapter.notifyDataSetChanged();
         newItem.setText("");
     }
 
+    // state saving help courtesy of https://stackoverflow.com/questions/151777/how-to-save-an-activity-state-using-save-instance-state?answertab=votes#tab-top
+    // and https://gist.github.com/OrenBochman/34c1adcd61b7f052d022553cb5b190a5
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putSerializable("items",items);
+        // etc.
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        this.items.clear();
+        this.items.addAll((ArrayList<String>) savedInstanceState.getSerializable("items"));
+        this.itemsAdapter.notifyDataSetChanged();
+    }
 }
