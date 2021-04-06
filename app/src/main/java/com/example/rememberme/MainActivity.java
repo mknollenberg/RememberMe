@@ -5,8 +5,10 @@ import androidx.fragment.app.DialogFragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,20 +18,45 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 // to do list made following tutorial at https://guides.codepath.com/android/Basic-Todo-App-Tutorial
 public class MainActivity extends AppCompatActivity {
 
+    private static final String ITEM_FILE_WRITE_ERROR = "MainActivity_itemsWrite";
+    private static final String ITEM_FILE_READ_ERROR = "MainActivity_itemsRead";
+    private static final String ITEMS_NOT_FOUND = "MainActivity_itemsNF";
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
     private ListView todoList;
     private TextView emptyText;
+    private String path;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (path == null){
+            path = MainActivity.this.getFilesDir().getAbsolutePath();
+        }
+
         setContentView(R.layout.activity_main);
         todoList = (ListView) findViewById(R.id.todoList);
         emptyText = (TextView) findViewById(R.id.emptyText);
@@ -82,25 +109,50 @@ public class MainActivity extends AppCompatActivity {
         newItem.setText("");
     }
 
-    // state saving help courtesy of https://stackoverflow.com/questions/151777/how-to-save-an-activity-state-using-save-instance-state?answertab=votes#tab-top
-    // and https://gist.github.com/OrenBochman/34c1adcd61b7f052d022553cb5b190a5
+    // app specific storage following help from https://developer.android.com/training/data-storage/app-specific
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-        savedInstanceState.putSerializable("items",items);
-        // etc.
+    protected void onStop() {
+        super.onStop();
+        String filename = "todo-items";
+        ArrayList<String> fileContents = items;
+
+        // ArrayList<String> to byte[] from https://stackoverflow.com/questions/5618978/convert-arrayliststring-to-byte
+        // write to byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(baos);
+        for (String element : items) {
+            try {
+                out.writeUTF(element);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        byte[] bytes = baos.toByteArray();
+
+        try (FileOutputStream fos = MainActivity.this.openFileOutput(filename, Context.MODE_PRIVATE)) {
+            fos.write(bytes);
+        } catch (IOException e) {
+            Log.e(ITEM_FILE_WRITE_ERROR,"error when writing item list to file");
+        }
     }
 
+    // app specific storage following help from https://developer.android.com/training/data-storage/app-specific
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
-        this.items.clear();
-        this.items.addAll((ArrayList<String>) savedInstanceState.getSerializable("items"));
-        this.itemsAdapter.notifyDataSetChanged();
+    protected void onStart() {
+        super.onStart();
+        itemsAdapter.clear();
+
+        // read from byte array
+        try {
+            byte[] fileContent = Files.readAllBytes(Paths.get(path + "/todo-items"));
+            ByteArrayInputStream bais = new ByteArrayInputStream(fileContent);
+            DataInputStream in = new DataInputStream(bais);
+            while (in.available() > 0) {
+                String element = in.readUTF();
+                itemsAdapter.add(element);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
