@@ -7,9 +7,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -42,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String ITEM_FILE_WRITE_ERROR = "MainActivity_itemsWrite";
     private static final String ITEM_FILE_READ_ERROR = "MainActivity_itemsRead";
-    private static final String ITEMS_NOT_FOUND = "MainActivity_itemsNF";
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
     private ListView todoList;
@@ -60,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         todoList = (ListView) findViewById(R.id.todoList);
         emptyText = (TextView) findViewById(R.id.emptyText);
-        emptyText.setVisibility(View.VISIBLE);
         todoList.setEmptyView(emptyText);
         items = new ArrayList<String>();
         itemsAdapter = new ArrayAdapter<String>(this,
@@ -69,10 +69,11 @@ public class MainActivity extends AppCompatActivity {
         setupListViewListener();
     }
 
+    // dialog help from https://developer.android.com/guide/topics/ui/dialogs
     public void todoInfo(View view) {
             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); //Read Update
-            alertDialog.setTitle(R.string.todoDiagTitle);
-            alertDialog.setMessage(getResources().getString(R.string.todoDialog));
+            alertDialog.setTitle(MainActivity.this.getResources().getString(R.string.todoDiagTitle));
+            alertDialog.setMessage(MainActivity.this.getResources().getString(R.string.todoDialog));
 
             alertDialog.setButton("Got it!", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             alertDialog.show();
-        }
+    }
 
     // Attaches a long click listener to the listview
     private void setupListViewListener() {
@@ -114,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         String filename = "todo-items";
-        ArrayList<String> fileContents = items;
 
         // ArrayList<String> to byte[] from https://stackoverflow.com/questions/5618978/convert-arrayliststring-to-byte
         // write to byte array
@@ -152,7 +152,12 @@ public class MainActivity extends AppCompatActivity {
                 itemsAdapter.add(element);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(ITEM_FILE_READ_ERROR,"error when reading item list from file");
         }
+    }
+
+    public void toContacts(View view) {
+        Intent i = new Intent(MainActivity.this,Contacts.class);
+        startActivity(i);
     }
 }

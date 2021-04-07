@@ -1,9 +1,24 @@
 <resources>
     <string name="app_name">RememberMe</string>
     <string name="emptyText">Nothing here. All done I guess!</string>
+    <string name="emptyContacts">No contacts yet!</string>
     <string name="todoDialog">To add a new item, type in the field at the bottom and press "ADD ITEM." To remove a completed item, long-press the item you want to remove.</string>
     <string name="todoDiagTitle">To-Do Help</string>
+    <string name="contactDialog">To add a new contact, press the "NEW CONTACT" button at the bottom and fill in the information. To view a contact, tap on the contact you wish to view. While viewing a contact, you can choose to delete or edit the contact in question.</string>
+    <string name="contactDiagTitle">Contacts Help</string>
     <string name="addItemBtn">Add Item</string>
     <string name="editTxtNewItem">Enter a new item</string>
     <string name="helpBtn">Help</string>
+    <string name="newContact">New Contact</string>
+    <string name="title_activity_contacts">Contacts</string>
+    <string name="toContacts">View Contacts</string>
+    <string name="toToDoList">View To-Do List</string>
+    <string name="name">Name</string>
+    <string name="birthday">Birthday (xx/xx/xxxx)</string>
+    <string name="address1">Address line one</string>
+    <string name="address2">Address line two</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="zip">Zip</string>
+
 </resources>
