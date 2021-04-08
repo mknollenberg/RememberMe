@@ -22,8 +22,7 @@ public class Person {
 
     public String toString()
     {
-        String personString = "";
-        personString.concat(name).concat(",").concat(bDay).concat(",").concat(addressLineOne).concat(",").concat(addressLineTwo).concat(",").concat(city).concat(",").concat(state).concat(",").concat(zipCode);
+        String personString = name + "," + bDay + "," + addressLineOne + "," + addressLineTwo + "," + city + "," + state + "," + zipCode;
         return personString;
     }
 

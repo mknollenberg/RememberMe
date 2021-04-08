@@ -27,8 +27,9 @@ public class AddContact extends Activity {
     }
 
     public void onCancel(View view) {
-        Intent i = new Intent(AddContact.this,Contacts.class);
-        startActivity(i);
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_CANCELED, returnIntent);
+        finish();
     }
 
     public void onAdd(View view) {
@@ -39,7 +40,7 @@ public class AddContact extends Activity {
         String contactCity = city.getText().toString();
         String contactState = state.getText().toString();
         String contactZip = zip.getText().toString();
-        Intent i = new Intent(AddContact.this,Contacts.class);
+        Intent i = new Intent();
         i.putExtra("name",contactName);
         i.putExtra("bday",contactBDay);
         i.putExtra("addr1",contactAddr1);
@@ -47,6 +48,7 @@ public class AddContact extends Activity {
         i.putExtra("city",contactCity);
         i.putExtra("state",contactState);
         i.putExtra("zip",contactZip);
-        startActivity(i);
+        setResult(Activity.RESULT_OK,i);
+        finish();
     }
 }
